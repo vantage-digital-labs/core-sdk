@@ -1,0 +1,50 @@
+{
+  "name": "@vantage-labs/core-sdk",
+  "version": "2.3.0",
+  "description": "Official SDK for Vantage Digital Labs gaming AI platform",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "test": "vitest",
+    "lint": "eslint src/",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "game-ai",
+    "npc",
+    "vertex-ai",
+    "gemini",
+    "voice-synthesis",
+    "tts",
+    "game-development",
+    "vantage"
+  ],
+  "author": "Vantage Digital Labs <store@vantage-digital.online>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vantage-digital-labs/core-sdk.git"
+  },
+  "homepage": "https://vantage-digital.online",
+  "bugs": {
+    "url": "https://github.com/vantage-digital-labs/core-sdk/issues"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "dependencies": {
+    "ws": "^8.16.0",
+    "undici": "^6.6.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.2.0",
+    "eslint": "^8.56.0"
+  }
+}
