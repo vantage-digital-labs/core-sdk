@@ -114,6 +114,10 @@ export class VantageClient {
         if (err instanceof RateLimitError || err instanceof VantageError) {
           throw err;
         }
+        // Don't retry on abort/timeout — surface immediately
+        if ((err as any)?.name === 'AbortError') {
+          throw err;
+        }
         if (attempt < this.config.maxRetries) {
           await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
         }
