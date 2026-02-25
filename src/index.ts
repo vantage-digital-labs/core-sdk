@@ -119,7 +119,7 @@ export class VantageClient {
           throw err;
         }
         if (attempt < this.config.maxRetries) {
-          await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
+          await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
         }
       }
     }

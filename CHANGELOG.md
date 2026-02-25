@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.3.1] - 2026-02-25
+### Fixed
+- Abort/timeout errors no longer trigger retry attempts
+- Default retry backoff interval corrected to 1000ms per attempt
+
 ## [2.3.0] - 2026-01-28
 ### Added
 - WebSocket streaming API for real-time dialogue
