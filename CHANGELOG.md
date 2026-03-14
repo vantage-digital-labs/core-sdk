@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.3.2] - 2026-03-14
+### Fixed
+- Narrowed `context` field type to `ContextVars` (no nested objects)
+- Added region validation in `VantageClient` constructor
+
 ## [2.3.1] - 2026-02-25
 ### Fixed
 - Abort/timeout errors no longer trigger retry attempts

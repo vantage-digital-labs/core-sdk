@@ -10,11 +10,13 @@ export interface VantageConfig {
   baseUrl?: string;
 }
 
+export type ContextVars = Record<string, string | number | boolean>;
+
 export interface ChatRequest {
   npcId: string;
   playerId: string;
   message: string;
-  context?: Record<string, any>;
+  context?: ContextVars;
   language?: 'ja' | 'ko' | 'zh' | 'en';
   voiceEnabled?: boolean;
 }
@@ -62,6 +64,9 @@ export class VantageClient {
   npc: NPCModule;
 
   constructor(config: VantageConfig) {
+    if (config.region && !REGION_ENDPOINTS[config.region]) {
+      throw new Error(`Unknown region: "${config.region}". Valid regions: ${Object.keys(REGION_ENDPOINTS).join(', ')}`);
+    }
     this.config = {
       region: 'asia-northeast1',
       timeout: 8000,
