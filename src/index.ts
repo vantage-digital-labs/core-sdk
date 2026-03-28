@@ -3,7 +3,7 @@ import { request } from 'undici';
 
 export interface VantageConfig {
   apiKey: string;
-  region?: 'asia-northeast1' | 'asia-northeast3' | 'cn-shanghai';
+  region?: 'asia-northeast1' | 'asia-northeast3' | 'cn-shanghai' | 'us-west1';
   timeout?: number;
   maxRetries?: number;
   wsKeepAlive?: boolean;
@@ -31,6 +31,20 @@ export interface ChatResponse {
   latencyMs: number;
 }
 
+export interface VoiceSynthRequest {
+  text: string;
+  voiceId: string;
+  language: 'ja' | 'ko' | 'zh' | 'en';
+  emotion?: string;
+  speed?: number;
+}
+
+export interface VoiceSynthResponse {
+  url: string;
+  duration: number;
+  format: 'opus' | 'mp3';
+}
+
 export class VantageError extends Error {
   code: string;
   status: number;
@@ -55,6 +69,7 @@ const REGION_ENDPOINTS: Record<string, string> = {
   'asia-northeast1': 'https://api-tokyo.vantage-digital.online',
   'asia-northeast3': 'https://api-seoul.vantage-digital.online',
   'cn-shanghai': 'https://api-cn.vantage-digital.online',
+  'us-west1': 'https://api-us.vantage-digital.online',
 };
 
 export class VantageClient {
@@ -62,6 +77,7 @@ export class VantageClient {
   private baseUrl: string;
 
   npc: NPCModule;
+  voice: VoiceModule;
 
   constructor(config: VantageConfig) {
     if (config.region && !REGION_ENDPOINTS[config.region]) {
@@ -69,7 +85,7 @@ export class VantageClient {
     }
     this.config = {
       region: 'asia-northeast1',
-      timeout: 8000,
+      timeout: 10000,
       maxRetries: 3,
       wsKeepAlive: true,
       baseUrl: '',
@@ -77,6 +93,7 @@ export class VantageClient {
     };
     this.baseUrl = this.config.baseUrl || REGION_ENDPOINTS[this.config.region];
     this.npc = new NPCModule(this);
+    this.voice = new VoiceModule(this);
   }
 
   async request(method: string, path: string, body?: any): Promise<any> {
@@ -165,6 +182,14 @@ class NPCModule {
     return this.client.createWebSocket(
       `/v2/npc/stream?npcId=${opts.npcId}&playerId=${opts.playerId}`
     );
+  }
+}
+
+class VoiceModule {
+  constructor(private client: VantageClient) {}
+
+  async synthesize(req: VoiceSynthRequest): Promise<VoiceSynthResponse> {
+    return this.client.request('POST', '/v2/voice/synthesize', req);
   }
 }
 

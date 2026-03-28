@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.4.0] - 2026-03-28
+### Added
+- Voice synthesis module (`client.voice.synthesize`)
+- `us-west1` region support (beta)
+- Multi-language auto-detection for player input
+
+### Changed
+- Default timeout increased to 10000ms
+- Improved retry logic with exponential backoff
+
 ## [2.3.2] - 2026-03-14
 ### Fixed
 - Narrowed `context` field type to `ContextVars` (no nested objects)
