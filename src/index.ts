@@ -108,7 +108,7 @@ export class VantageClient {
             headers: {
               'Authorization': `Bearer ${this.config.apiKey}`,
               'Content-Type': 'application/json',
-              'X-SDK-Version': '2.3.0',
+              'X-SDK-Version': '2.4.1',
             },
             body: body ? JSON.stringify(body) : undefined,
             signal: AbortSignal.timeout(this.config.timeout),
@@ -154,17 +154,22 @@ export class VantageClient {
     const ws = new WebSocket(`${wsUrl}${path}`, {
       headers: {
         'Authorization': `Bearer ${this.config.apiKey}`,
-        'X-SDK-Version': '2.3.0',
+        'X-SDK-Version': '2.4.1',
       },
     });
 
     if (this.config.wsKeepAlive) {
-      const interval = setInterval(() => {
-        if (ws.readyState === WebSocket.OPEN) {
-          ws.ping();
-        }
-      }, 30000);
-      ws.on('close', () => clearInterval(interval));
+      let interval: ReturnType<typeof setInterval> | null = null;
+      ws.on('open', () => {
+        interval = setInterval(() => {
+          if (ws.readyState === WebSocket.OPEN) {
+            ws.ping();
+          }
+        }, 30000);
+      });
+      ws.on('close', () => {
+        if (interval) clearInterval(interval);
+      });
     }
 
     return ws;

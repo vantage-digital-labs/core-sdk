@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.4.1] - 2026-04-17
+### Fixed
+- WebSocket keepalive interval now starts only after connection is open (fixes race on fast reconnect)
+- TypeScript strict mode compatibility for ChatResponse type
+
 ## [2.4.0] - 2026-03-28
 ### Added
 - Voice synthesis module (`client.voice.synthesize`)
