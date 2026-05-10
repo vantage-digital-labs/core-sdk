@@ -10,13 +10,11 @@ export interface VantageConfig {
   baseUrl?: string;
 }
 
-export type ContextVars = Record<string, string | number | boolean>;
-
 export interface ChatRequest {
   npcId: string;
   playerId: string;
   message: string;
-  context?: ContextVars;
+  context?: Record<string, any>;
   language?: 'ja' | 'ko' | 'zh' | 'en';
   voiceEnabled?: boolean;
 }
@@ -80,9 +78,6 @@ export class VantageClient {
   voice: VoiceModule;
 
   constructor(config: VantageConfig) {
-    if (config.region && !REGION_ENDPOINTS[config.region]) {
-      throw new Error(`Unknown region: "${config.region}". Valid regions: ${Object.keys(REGION_ENDPOINTS).join(', ')}`);
-    }
     this.config = {
       region: 'asia-northeast1',
       timeout: 10000,
@@ -136,10 +131,6 @@ export class VantageClient {
         if (err instanceof RateLimitError || err instanceof VantageError) {
           throw err;
         }
-        // Don't retry on abort/timeout — surface immediately
-        if ((err as any)?.name === 'AbortError') {
-          throw err;
-        }
         if (attempt < this.config.maxRetries) {
           await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
         }
@@ -159,17 +150,12 @@ export class VantageClient {
     });
 
     if (this.config.wsKeepAlive) {
-      let interval: ReturnType<typeof setInterval> | null = null;
-      ws.on('open', () => {
-        interval = setInterval(() => {
-          if (ws.readyState === WebSocket.OPEN) {
-            ws.ping();
-          }
-        }, 30000);
-      });
-      ws.on('close', () => {
-        if (interval) clearInterval(interval);
-      });
+      const interval = setInterval(() => {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.ping();
+        }
+      }, 30000);
+      ws.on('close', () => clearInterval(interval));
     }
 
     return ws;
