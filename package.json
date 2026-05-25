@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts",
-    "test": "vitest",
+    "test": "vitest --run",
     "lint": "eslint --ext .ts src/",
     "prepublishOnly": "npm run build"
   },
